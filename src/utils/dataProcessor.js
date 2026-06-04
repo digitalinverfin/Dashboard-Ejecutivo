@@ -85,7 +85,7 @@ export function processData(rawData, mapping) {
       valid.push(processed)
     } else {
       invalid.push({
-        rowIndex: rowIndex + 2, // +2 porque Excel incluye header y es 1-indexed
+        rowIndex: rowIndex + 2,
         errors,
         data: processed
       })
@@ -109,25 +109,22 @@ function isValidEmail(email) {
 function parseDate(dateStr) {
   if (!dateStr) return null
 
-  // Si ya es objeto Date
   if (dateStr instanceof Date) {
     return isValidDate(dateStr) ? dateStr : null
   }
 
   const str = String(dateStr).trim()
 
-  // Intenta parsear como ISO
   const isoDate = new Date(str)
   if (isValidDate(isoDate)) {
     return isoDate
   }
 
-  // Intenta formatos comunes
   const formats = [
-    /^(\d{4})-(\d{2})-(\d{2})$/, // YYYY-MM-DD
-    /^(\d{2})\/(\d{2})\/(\d{4})$/, // DD/MM/YYYY
-    /^(\d{2})-(\d{2})-(\d{4})$/, // DD-MM-YYYY
-    /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/ // D/M/YY o D/M/YYYY
+    /^(\d{4})-(\d{2})-(\d{2})$/,
+    /^(\d{2})\/(\d{2})\/(\d{4})$/,
+    /^(\d{2})-(\d{2})-(\d{4})$/,
+    /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/
   ]
 
   for (const format of formats) {
@@ -136,16 +133,12 @@ function parseDate(dateStr) {
       let year, month, day
 
       if (format === formats[0]) {
-        // YYYY-MM-DD
         [, year, month, day] = match
       } else if (format === formats[1]) {
-        // DD/MM/YYYY
         [, day, month, year] = match
       } else if (format === formats[2]) {
-        // DD-MM-YYYY
         [, day, month, year] = match
       } else if (format === formats[3]) {
-        // D/M/YY o D/M/YYYY
         [, day, month, year] = match
         if (year.length === 2) {
           year = year < 50 ? '20' + year : '19' + year
@@ -170,7 +163,7 @@ function isValidDate(date) {
 }
 
 /**
- * Normaliza estados a un formato estándar
+ * Normaliza estados a formato estándar
  */
 function normalizeStatus(status) {
   const statusMap = {
@@ -181,12 +174,12 @@ function normalizeStatus(status) {
     pagado: 'recovered',
     completado: 'recovered',
     completada: 'recovered',
-    
+
     pendiente: 'pending',
     pending: 'pending',
     en_proceso: 'pending',
-    en proceso: 'pending',
-    
+    "en proceso": "pending",
+
     abandonado: 'abandoned',
     abandoned: 'abandoned',
     perdido: 'abandoned',
